@@ -35,6 +35,7 @@ to the bootloader; see `docs/firmware-root.md`).
 | `exploit/` | USB stick layout + `MScript.sh` launcher template, static dropbear build recipe, and `root-payload/` (installer + boot hook) |
 | `tools/` | host helpers: page bridge, RPC client, mboot orchestrator/command/dump tools, serial logger |
 | `esp32/` | ESP32-S3 UART bridge firmware for the projector console |
+| `docs/history/` | preserved research artifacts: the measured dead ends (MI flash-read, af_unix GC race, seccomp map) that shaped the working chain |
 | `docs/*.md` | the attack-surface writeup and the firmware/root routes |
 
 ## Quickstart (factory device, no disassembly)
