@@ -31,7 +31,13 @@ Nothing leaves your LAN. Only use this on hardware you own.</p>
 projector.</p>
 <button id="go">Execute stick launcher</button>
 
-<h2>2. Log</h2>
+<h2>2. Enable the boot console (for the root route)</h2>
+<p>Sets the persistent u-boot env <code>UARTOnOff=on</code> via the factory RPC —
+the prerequisite for <a href="uart-root.md">the permanent-root guide</a>. Harmless if
+you never open the case.</p>
+<button id="uart">Enable UART boot console</button>
+
+<h2>3. Log</h2>
 <div id="log"></div>
 
 <h2>Troubleshooting</h2>
@@ -102,6 +108,18 @@ document.getElementById("go").onclick = async () => {
            : "no stick path accepted — is the stick FAT32 with MScript.sh at its root? did you cold-boot with it inserted?",
        done ? "ok" : "err");
   btn.disabled = false;
+};
+
+
+document.getElementById("uart").onclick = async () => {
+  try {
+    const r = await rpc("mtk.webui.factory.sys.setEmmcEnvVar",
+                        { key: "UARTOnOff", val: "on" }, 6000);
+    log("UARTOnOff=on -> " + JSON.stringify(r).slice(0, 200), "ok");
+    log("boot console enabled; see docs/uart-root.md for the rest", "ok");
+  } catch (e) {
+    log("setEmmcEnvVar failed: " + e.message, "err");
+  }
 };
 
 // connectivity precheck for a clearer failure mode

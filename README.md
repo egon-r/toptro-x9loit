@@ -32,8 +32,9 @@ to the bootloader; see `docs/firmware-root.md`).
 | path | what it is |
 |---|---|
 | `docs/`  | GitHub Pages site (exploit page): open it in the projector's browser, it drives the factory RPC (stick `executeShell`, USB-path probing, status display) |
-| `exploit/` | USB stick layout + `MScript.sh` launcher template and the static dropbear build recipe |
-| `tools/` | host-side helpers: bridge/shell page host, reverse-shell listener, RPC client, page client |
+| `exploit/` | USB stick layout + `MScript.sh` launcher template, static dropbear build recipe, and `root-payload/` (installer + boot hook) |
+| `tools/` | host helpers: page bridge, RPC client, mboot orchestrator/command/dump tools, serial logger |
+| `esp32/` | ESP32-S3 UART bridge firmware for the projector console |
 | `docs/*.md` | the attack-surface writeup and the firmware/root routes |
 
 ## Quickstart (factory device, no disassembly)
@@ -58,8 +59,9 @@ you do not own. Vendor-copyrighted binaries are intentionally absent.
 ## Status
 
 - Foothold (factoryservice shell from stick + page): working, documented here.
-- Root: possible via the mboot/UART route — see `docs/firmware-root.md` for
-  the state of the art and hardware needed.
+- Root: **complete guide at `docs/uart-root.md`** — page-enabled boot console,
+  UART wiring (photo inside), mboot tap, self-backup, one-time root shell,
+  persistent root payload, recovery. Firmware stays stock and verified.
 - A no-hardware root path is research-in-progress (kernel 4.19.116 has
   reachable-but-unweaponized x_tables surface); not published yet because it
   does not exist yet.
