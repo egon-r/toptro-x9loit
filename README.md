@@ -18,7 +18,7 @@ The X9 runs a Linux 4.19 armv7 system with an embedded Chromium-based browser
   571 methods, including `mtk.webui.factory.sys.executeShell`, which copies a
   script from a USB stick and executes it as the `factoryservice` user.
 - The browser can open arbitrary pages, so any page loaded on the projector
-  can talk to that loopback RPC (see `page/`).
+  can talk to that loopback RPC (see `docs/`).
 - The u-boot environment is writable through the same RPC (`setEmmcEnvVar`).
 
 Result: **unprivileged code execution from a USB stick + one browser page
@@ -34,7 +34,7 @@ to the bootloader; see `docs/firmware-root.md`).
 | `docs/`  | GitHub Pages site (exploit page): open it in the projector's browser, it drives the factory RPC (stick `executeShell`, USB-path probing, status display) |
 | `exploit/` | USB stick layout + `MScript.sh` launcher template and the static dropbear build recipe |
 | `tools/` | host-side helpers: bridge/shell page host, reverse-shell listener, RPC client, page client |
-| `docs/` | the attack-surface writeup and the firmware/root routes |
+| `docs/*.md` | the attack-surface writeup and the firmware/root routes |
 
 ## Quickstart (factory device, no disassembly)
 
