@@ -31,7 +31,7 @@ to the bootloader; see `docs/firmware-root.md`).
 
 | path | what it is |
 |---|---|
-| `page/` | GitHub Pages exploit page: open it in the projector's browser, it drives the factory RPC (stick `executeShell`, USB-path probing, status display) |
+| `docs/`  | GitHub Pages site (exploit page): open it in the projector's browser, it drives the factory RPC (stick `executeShell`, USB-path probing, status display) |
 | `exploit/` | USB stick layout + `MScript.sh` launcher template and the static dropbear build recipe |
 | `tools/` | host-side helpers: bridge/shell page host, reverse-shell listener, RPC client, page client |
 | `docs/` | the attack-surface writeup and the firmware/root routes |
