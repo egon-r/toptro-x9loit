@@ -51,3 +51,8 @@ route.
   what is EPERM'd, what passes). Still the reference for "what can a
   stick-launched process do" — and the reason the working foothold avoids
   every filtered surface.
+
+## The fallen
+
+- `usb-stick-memorial.md` — the heroic USB stick that died (Request Sense 07 27
+  00) holding the first complete firmware dump. Everything descends from it.
