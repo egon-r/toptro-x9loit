@@ -24,14 +24,18 @@ persists in the u-boot environment.
 
 ## 2. Wire the UART
 
-Inside the case, on the main board: **TX, RX pads next to the USB-side
-edge**, GND at the screw hole (H1). Board TX → adapter RX, board RX →
-adapter TX, 115200 8N1.
+Inside the case, on the main board: the **silk-labelled RX and TX pads on
+the underside, near the USB-side edge** (ignore the 3-pad row carrying
+service lines — it is not the console), GND at the screw hole (H1).
 
-![solder points](img/pads_labelled.png)
+- board **TX → your adapter RX**, board **RX → your adapter TX**
+- 115200 8N1, 3.3 V logic only — never connect 5 V
+- connect GND first, keep leads short
+- soldering is optional to start: firm pin contact on the pads works for a
+  first probe
 
-Open the case, connect GND first, keep leads short. Soldering is optional to
-start — good pin contact works for a first probe.
+*(Photo of the correctly wired underside: to be contributed — a plain
+close-up of the two silk pads + GND point, no serials, metadata stripped.)*
 
 ## 3. Flash the ESP32 bridge (or skip it with a plain adapter)
 
