@@ -19,5 +19,7 @@ one. Its write-protected death was transient from the host's point of view —
 the same stick "writes fine from macOS" — but it had already given what it
 had to give.
 
+![the stick at rest](img/usb_funeral.jpg)
+
 Every `.BIN` in the private archive descends from that stick. Remember it
 when you run `tools/dump-emmc.sh` — and carry a fresh one.
