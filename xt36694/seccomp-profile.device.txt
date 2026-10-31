@@ -1,0 +1,106 @@
+# Device-seccomp allowlist profile for jail (xt36694 lab).
+# One syscall name per line; names must exist in jail.c's table. Default action
+# is KILL (the device filter SIGSYS-kills non-allowlisted calls). INCOMPLETE:
+# measured subset from M6/M18/M19 — runtime essentials plus confirmed-allowed
+# attack-relevant calls. Gaps default to KILL; add names only after confirming
+# they are allowed on the device.
+#
+# --- essentials ---
+read
+write
+open
+openat
+close
+fstat
+stat
+lstat
+lseek
+mmap2
+munmap
+mprotect
+madvise
+mremap
+brk
+vmsplice
+readv
+writev
+poll
+ppoll
+pselect6
+dup
+dup2
+dup3
+pipe
+pipe2
+futex
+nanosleep
+clock_nanosleep
+clock_gettime
+gettimeofday
+rt_sigaction
+rt_sigprocmask
+rt_sigreturn
+clone
+execve
+exit
+exit_group
+wait4
+waitid
+kill
+tgkill
+set_tid_address
+set_robust_list
+get_robust_list
+getuid
+geteuid
+getgid
+getegid
+getpid
+gettid
+getppid
+getdents64
+ioctl
+prctl
+restart_syscall
+sched_yield
+sched_setaffinity
+sched_getaffinity
+umask
+mkdir
+unlink
+rename
+chmod
+# --- networking (DGRAM reaches iptables; RAW is blocked on device) ---
+socket
+bind
+connect
+listen
+accept
+accept4
+sendto
+recvfrom
+sendmsg
+recvmsg
+shutdown
+setsockopt
+getsockopt
+getsockname
+getpeername
+# --- spray/research primitives measured allowed on device ---
+io_setup
+io_submit
+io_getevents
+io_destroy
+pidfd_open
+memfd_create
+epoll_create1
+epoll_ctl
+epoll_wait
+timerfd_create
+timerfd_settime
+timerfd_gettime
+inotify_init1
+inotify_add_watch
+inotify_rm_watch
+shmat
+shmdt

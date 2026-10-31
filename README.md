@@ -35,6 +35,7 @@ to the bootloader; see `docs/firmware-root.md`).
 | `exploit/` | USB stick layout + `MScript.sh` launcher template, static dropbear build recipe, and `root-payload/` (installer + boot hook) |
 | `tools/` | host helpers: page bridge, RPC client, mboot orchestrator/command/dump tools, serial logger |
 | `esp32/` | ESP32-S3 UART bridge firmware for the projector console |
+| `xt36694/` | **the weapon** — CVE-2020-36694 race trigger, UAF reclaim spray, arbitrary-increment aiming, device-faithful jail, surface probes, detector (research state; see its README) |
 | `docs/history/` | preserved research artifacts: the measured dead ends (MI flash-read, af_unix GC race, seccomp map) that shaped the working chain |
 | `docs/*.md` | the attack-surface writeup and the firmware/root routes |
 
