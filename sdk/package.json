@@ -1,0 +1,21 @@
+{
+  "name": "@x9/web-sdk",
+  "version": "0.1.1",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node tools/build.mjs",
+    "start": "node tools/serve.mjs",
+    "verify": "node tools/verify.mjs",
+    "launcher": "node launcher/serve.mjs",
+    "launcher:verify": "node launcher/verify.mjs",
+    "browser:install": "mkdir -p .cache/tmp && TMPDIR=\"$PWD/.cache/tmp\" PLAYWRIGHT_BROWSERS_PATH=.cache/browsers playwright install chromium --only-shell"
+  },
+  "devDependencies": {
+    "acorn": "8.15.0",
+    "playwright": "1.64.1"
+  }
+}

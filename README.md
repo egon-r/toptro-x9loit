@@ -38,6 +38,26 @@ to the bootloader; see `docs/firmware-root.md`).
 | `xt36694/` | **the weapon** — CVE-2020-36694 race trigger, UAF reclaim spray, arbitrary-increment aiming, device-faithful jail, surface probes, detector (research state; see its README) |
 | `docs/history/` | preserved research artifacts: the measured dead ends (MI flash-read, af_unix GC race, seccomp map) that shaped the working chain |
 | `docs/*.md` | the attack-surface writeup and the firmware/root routes |
+| `sdk/` | **web-app SDK** — develop for the projector's stock Sraf browser entirely off-device: ES5 browser library, a Hello World sample, and a local preview running the *original* stock launcher (simulated firmware services) with a dev tile that launches your app |
+
+
+## Developing apps for the projector (`sdk/`)
+
+The stock launcher and browser UI are web-based (Sraf Chromium), so apps can be
+built as ordinary web pages. `sdk/` gives you the pieces to do that without a
+projector attached:
+
+```sh
+npm --prefix sdk run verify    # build + verify the Hello World sample headlessly
+npm --prefix sdk run launcher  # original stock launcher at http://127.0.0.1:4174
+```
+
+The launcher preview runs the genuine Navigator Vue bundle with firmware
+services (the loopback websocket RPC) replaced by an explicit local simulator;
+unsupported firmware calls fail loudly rather than pretending. Launcher assets
+are staged from a rootfs dump you hold locally (not shipped) and are scrubbed at
+serve time. This is a development harness, not a firmware emulator — see
+`sdk/README.md` for the exact evidence boundaries.
 
 ## Quickstart (factory device, no disassembly)
 
